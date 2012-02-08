@@ -82,7 +82,7 @@ static block_t *current_block;  // A pointer to the block currently being traced
 // Variables used by The Stepper Driver Interrupt
 //static uint8_t out_bits;        // The next stepping-bits to be output
 static uint32_t direction_bits; // all axes (different ports)    
-static uint32_t step_bits_e;    // for extruder     
+static uint32_t step_bits_e;    // for extruder
 static uint32_t step_bits_xyz;  // for XYZ steppers (same port)
 
 static int32_t counter_x,       // Counter variables for the bresenham line tracer
@@ -170,7 +170,7 @@ static inline void  set_direction_pins (void)
 static inline void  set_step_pins (void) 
 {
   // XYZ Steppers on same port
-#ifdef STEP_LED_FLASH_VARIABLE
+  #ifdef STEP_LED_FLASH_VARIABLE
   if (step_bits_xyz & (1<<X_STEP_BIT))
   {
     inc_led_count (&led_count[X_AXIS], (1<<X_AXIS));
@@ -184,8 +184,12 @@ static inline void  set_step_pins (void)
     inc_led_count (&led_count[Z_AXIS], (1<<Z_AXIS));
   }
 #endif
-  
-  GPIO_SetValue (X_STEP_PORT, step_bits_xyz);
+  // XYZ Steppers on different ports
+  GPIO_SetValue (X_STEP_PORT, step_bits_xyz & X_STEP_PIN);
+  GPIO_SetValue (Y_STEP_PORT, step_bits_xyz & Y_STEP_PIN);
+  GPIO_SetValue (Z_STEP_PORT, step_bits_xyz & Z_STEP_PIN);
+  // XYZ Steppers on same port
+//  GPIO_SetValue (X_STEP_PORT, step_bits_xyz);
     
   // extruder stepper    
   if (step_bits_e)
@@ -205,8 +209,12 @@ static inline void  set_step_pins (void)
 // unstep all stepper pins (output low)
 static inline void  clear_all_step_pins (void) 
 {
+  // Note: XYZ on different ports
+  GPIO_ClearValue (X_STEP_PORT, X_STEP_PIN);
+  GPIO_ClearValue (Y_STEP_PORT, Y_STEP_PIN);
+  GPIO_ClearValue (Z_STEP_PORT, Z_STEP_PIN);
   // Note: XYZ on same port 
-  GPIO_ClearValue (X_STEP_PORT, X_STEP_PIN | Y_STEP_PIN | Z_STEP_PIN);
+  /* GPIO_ClearValue (X_STEP_PORT, X_STEP_PIN | Y_STEP_PIN | Z_STEP_PIN); */
   
   GPIO_ClearValue (E_STEP_PORT, E_STEP_PIN);
 }
@@ -214,8 +222,12 @@ static inline void  clear_all_step_pins (void)
 // unstep selected pins
 static inline void  clear_step_pins (void) 
 {
+  // XYZ Steppers on different ports
+  GPIO_ClearValue (X_STEP_PORT, step_bits_xyz & X_STEP_PIN);
+  GPIO_ClearValue (Y_STEP_PORT, step_bits_xyz & Y_STEP_PIN);
+  GPIO_ClearValue (Z_STEP_PORT, step_bits_xyz & Z_STEP_PIN);
   // XYZ Steppers on same port
-  GPIO_ClearValue (X_STEP_PORT, step_bits_xyz);
+//  GPIO_ClearValue (X_STEP_PORT, step_bits_xyz);
     
   // extruder stepper    
   if (step_bits_e)
@@ -235,18 +247,24 @@ static inline void  clear_step_pins_by_state (void)
   if ((led_on & (1<<X_AXIS)) == 0)
   {
     step_pins |= X_STEP_PIN;
+    // XYZ Steppers on different ports
+    GPIO_ClearValue (X_STEP_PORT, X_STEP_PIN);
   }
   if ((led_on & (1<<Y_AXIS)) == 0)
   {
     step_pins |= Y_STEP_PIN;
+    // XYZ Steppers on different ports
+    GPIO_ClearValue (Y_STEP_PORT, Y_STEP_PIN);
   }
   if ((led_on & (1<<Z_AXIS)) == 0)
   {
     step_pins |= Z_STEP_PIN;
+    // XYZ Steppers on different ports
+    GPIO_ClearValue (Z_STEP_PORT, Z_STEP_PIN);
   }
-  
+
   // XYZ Steppers on same port
-  GPIO_ClearValue (X_STEP_PORT, step_pins);
+//  GPIO_ClearValue (X_STEP_PORT, step_pins);
 
   if ((led_on & (1<<E_AXIS)) == 0)
   {
@@ -568,16 +586,14 @@ void accelCallback (tHwTimer *pTimer, uint32_t int_mask)
 void stepCallback (tHwTimer *pTimer, uint32_t int_mask)
 {
   (void)pTimer;
-
-  digital_write (1, (1<<15), 1);
+  digital_write (DEBUG_PORT, DEBUG_PIN, 1);
 
 //  if (int_mask & _BIT(TIM_MR0_INT))
   {
     // call stepper function
     st_interrupt();
   }
-  
-  digital_write (1, (1<<15), 0);
+  digital_write (DEBUG_PORT, DEBUG_PIN, 0);
 }
 
 static void init_dac (void)
@@ -588,18 +604,19 @@ static void init_dac (void)
 	 * Init DAC pin connect
 	 * AOUT on P0.26
 	 */
-	PinCfg.Funcnum = 2;
+// TODO: Figure out what this is for
+/*	PinCfg.Funcnum = 2;
 	PinCfg.OpenDrain = 0;
 	PinCfg.Pinmode = 0;
 	PinCfg.Pinnum = 26;
 	PinCfg.Portnum = 0;
-	PINSEL_ConfigPin(&PinCfg);
+	PINSEL_ConfigPin(&PinCfg);*/
 
 	/* init DAC structure to default
 	 * Maximum	current is 700 uA
 	 * First value to AOUT is 0
 	 */
-	DAC_Init(LPC_DAC);
+/*	DAC_Init(LPC_DAC);*/
 }
 
 // Initialize and start the stepper motor subsystem
@@ -646,7 +663,7 @@ void st_init()
 #endif
 
   // setup debug pin
-  pin_mode(1, (1 << 15), OUTPUT);
+  pin_mode(DEBUG_PORT, DEBUG_PIN, OUTPUT);
     
 #endif
   

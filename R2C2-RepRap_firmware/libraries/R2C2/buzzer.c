@@ -32,6 +32,7 @@
 #include "lpc17xx_pwm.h"
 
 #include "timer.h"
+#include "pinout.h"
 
 static tTimer buzzerTimer;
 
@@ -75,18 +76,18 @@ static void buzzer_pwm_set_frequency (uint16_t frequency)
   /* Configure PWM channel edge option
    * Note: PWM Channel 1 is in single mode as default state and
    * can not be changed to double edge mode */
-  PWM_ChannelConfig(LPC_PWM1, 3, PWM_CHANNEL_SINGLE_EDGE);
+  PWM_ChannelConfig(LPC_PWM1, BUZZER_CHANNEL, PWM_CHANNEL_SINGLE_EDGE);
 
   /* Set up match value */
-  PWM_MatchUpdate(LPC_PWM1, 3, match_value/2, PWM_MATCH_UPDATE_NOW);
+  PWM_MatchUpdate(LPC_PWM1, BUZZER_CHANNEL, match_value/2, PWM_MATCH_UPDATE_NOW);
   /* Configure match option */
   PWMMatchCfgDat.IntOnMatch = DISABLE;
-  PWMMatchCfgDat.MatchChannel = 3;
+  PWMMatchCfgDat.MatchChannel = BUZZER_CHANNEL;
   PWMMatchCfgDat.ResetOnMatch = DISABLE;
   PWMMatchCfgDat.StopOnMatch = DISABLE;
   PWM_ConfigMatch(LPC_PWM1, &PWMMatchCfgDat);
   /* Enable PWM Channel Output */
-  PWM_ChannelCmd(LPC_PWM1, 3, ENABLE);
+  PWM_ChannelCmd(LPC_PWM1, BUZZER_CHANNEL, ENABLE);
 }
 
 static void buzzer_pwm_start (void)
@@ -144,8 +145,8 @@ void buzzer_init (void)
   PinCfg.Funcnum = PINSEL_FUNC_1;
   PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
   PinCfg.Pinmode = PINSEL_PINMODE_PULLUP;
-  PinCfg.Portnum = 2;
-  PinCfg.Pinnum = 2;
+  PinCfg.Portnum = BUZZER_PORT;
+  PinCfg.Pinnum = BUZZER_PIN;
   PINSEL_ConfigPin(&PinCfg);
   
   AddSlowTimer (&buzzerTimer);

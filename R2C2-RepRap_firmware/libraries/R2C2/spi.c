@@ -35,6 +35,8 @@
 #include "lpc17xx_ssp.h"
 #include "spi.h"
 
+#include "pinout.h"
+
 /*-----------------------------------------------------------------------*/
 /* SPI low-level functions                                               */
 /*-----------------------------------------------------------------------*/
@@ -56,21 +58,24 @@ void spi_init(void)
   PinCfg.Funcnum   = PINSEL_FUNC_0;
   PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
   PinCfg.Pinmode   = PINSEL_PINMODE_PULLUP;
-  PinCfg.Pinnum    = 16;
-  PinCfg.Portnum   = 0;
-  GPIO_SetDir(0, (1 << 16), 1);
+  PinCfg.Pinnum    = SD_SSEL_PIN;
+  PinCfg.Portnum   = SD_SSEL_PORT;
+  GPIO_SetDir(SD_SSEL_PORT, SD_SSEL_PIN, 1);
   PINSEL_ConfigPin(&PinCfg);
   /* SCK0 P0.15 alternate function 0b10 */
   PinCfg.Funcnum   = PINSEL_FUNC_2;
   PinCfg.Pinmode   = PINSEL_PINMODE_PULLDOWN;
-  PinCfg.Pinnum    = 15;
+  PinCfg.Pinnum    = SD_SCK_PIN;
+  PinCfg.Portnum   = SD_SCK_PORT;
   PINSEL_ConfigPin(&PinCfg);
   /* MISO0 P0.17 */
   PinCfg.Pinmode   = PINSEL_PINMODE_PULLUP;
-  PinCfg.Pinnum    = 17;
+  PinCfg.Pinnum    = SD_MISO_PIN;
+  PinCfg.Portnum   = SD_MISO_PORT;
   PINSEL_ConfigPin(&PinCfg);
   /* MOSI0 P0.18 */
-  PinCfg.Pinnum    = 18;
+  PinCfg.Pinnum    = SD_MOSI_PIN;
+  PinCfg.Portnum   = SD_MOSI_PORT;
   PINSEL_ConfigPin(&PinCfg);
 
   /* initialize SSP configuration structure */
@@ -108,14 +113,17 @@ void spi_close(void)
   PinCfg.Funcnum   = PINSEL_FUNC_0;
   PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
   PinCfg.Pinmode   = PINSEL_PINMODE_PULLDOWN;
-  PinCfg.Pinnum    = 16;
-  PinCfg.Portnum   = 0;
+  PinCfg.Pinnum    = SD_SSEL_PIN;
+  PinCfg.Portnum   = SD_SSEL_PORT;
   PINSEL_ConfigPin(&PinCfg);
-  PinCfg.Pinnum    = 15;
+  PinCfg.Pinnum    = SD_SCK_PIN;
+  PinCfg.Portnum   = SD_SCK_PORT;
   PINSEL_ConfigPin(&PinCfg);
-  PinCfg.Pinnum    = 17;
+  PinCfg.Pinnum    = SD_MISO_PIN;
+  PinCfg.Portnum   = SD_MISO_PORT;
   PINSEL_ConfigPin(&PinCfg);
-  PinCfg.Pinnum    = 18;
+  PinCfg.Pinnum    = SD_MOSI_PIN;
+  PinCfg.Portnum   = SD_MOSI_PORT;
   PINSEL_ConfigPin(&PinCfg);
 }
 

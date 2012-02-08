@@ -44,7 +44,7 @@
 /*
  * CodeRed - changed start sector from bank 2 to bank 16 - ie 64k into flash.
  */
-#define USER_START_SECTOR 16
+#define USER_START_SECTOR 3
 #define MAX_USER_SECTOR 29
 
 /*

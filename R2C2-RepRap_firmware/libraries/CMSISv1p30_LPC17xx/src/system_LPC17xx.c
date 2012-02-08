@@ -309,7 +309,7 @@
 // </e>
 */
 #define FLASH_SETUP           1
-#define FLASHCFG_Val          0x00004000
+#define FLASHCFG_Val          0x0000503A
 
 /*
 //-------- <<< end of configuration section >>> ------------------------------
@@ -369,7 +369,7 @@
 #endif
 
 /* Flash Accelerator Configuration -------------------------------------------*/
-#if (CHECK_RSVD((FLASHCFG_Val), ~0x0000F000))
+#if (CHECK_RSVD((FLASHCFG_Val), ~0x0000F07F))
    #error "FLASHCFG: Invalid values of reserved bits!"
 #endif
 

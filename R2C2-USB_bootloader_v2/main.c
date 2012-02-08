@@ -22,6 +22,8 @@
 #include	"uart.h"
 #include	"debug.h"
 
+#include        "delay.h"
+
 FATFS fatfs;
 FIL f;
 FRESULT r;
@@ -46,12 +48,23 @@ BOOL bootloader_button_pressed(void)
 	pin.Pinmode = PINSEL_PINMODE_PULLUP;
 	pin.OpenDrain = PINSEL_PINMODE_NORMAL;
 	PINSEL_ConfigPin(&pin);
+	pin.Portnum = 2;
+	pin.Pinnum = 10;
+	pin.Funcnum = PINSEL_FUNC_0;
+	pin.Pinmode = PINSEL_PINMODE_PULLUP;
+	pin.OpenDrain = PINSEL_PINMODE_NORMAL;
+	PINSEL_ConfigPin(&pin);
 
 	/* set as input */
 	GPIO_SetDir(4, (1<<29), 0);
+	GPIO_SetDir(2, (1<<10), 0);
+
+	_delay_ms(1500);
 
 	/* Verify if bootloader pin is activated */
 	if(GPIO_ReadValue(4) & (1<<29))
+		return FALSE;
+	if(GPIO_ReadValue(2) & (1<<10))
 		return FALSE;
 	return TRUE;
 }

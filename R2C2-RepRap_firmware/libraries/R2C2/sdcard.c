@@ -81,13 +81,17 @@ static uint8_t CardType;                       /* Card type flags */
 static inline void select_card()
 {
 	// SSEL1 P0.6 low
-	GPIO_ClearValue(0, (1 << 6));
+//	GPIO_ClearValue(0, (1 << 6));
+        // SSEL0 P0.6 low
+        GPIO_ClearValue(2, (1 << 0));
 }
 
 static inline void de_select_card()
 {
 	// SSEL1 high
-	GPIO_SetValue(0, (1 << 6));
+//	GPIO_SetValue(0, (1 << 6));
+        // SSEL1 high
+        GPIO_SetValue(2, (1 << 0));
 }
 
 /*-----------------------------------------------------------------------*/

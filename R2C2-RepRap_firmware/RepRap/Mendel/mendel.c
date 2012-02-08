@@ -94,18 +94,21 @@ void io_init(void)
   pin_mode(X_ENABLE_PORT, X_ENABLE_PIN, OUTPUT);
   x_enable();
   pin_mode(X_MIN_PORT, X_MIN_PIN, INPUT);
+  pin_mode(X_MAX_PORT, X_MAX_PIN, INPUT);
 
   pin_mode(Y_STEP_PORT, Y_STEP_PIN, OUTPUT);
   pin_mode(Y_DIR_PORT, Y_DIR_PIN, OUTPUT);
   pin_mode(Y_ENABLE_PORT, Y_ENABLE_PIN, OUTPUT);
   y_enable();
   pin_mode(Y_MIN_PORT, Y_MIN_PIN, INPUT);
+  pin_mode(Y_MAX_PORT, Y_MAX_PIN, INPUT);
 
   pin_mode(Z_STEP_PORT, Z_STEP_PIN, OUTPUT);
   pin_mode(Z_DIR_PORT, Z_DIR_PIN, OUTPUT);
   pin_mode(Z_ENABLE_PORT, Z_ENABLE_PIN, OUTPUT);
   z_enable();
   pin_mode(Z_MIN_PORT, Z_MIN_PIN, INPUT);
+  pin_mode(Z_MAX_PORT, Z_MAX_PIN, INPUT);
 
   pin_mode(E_STEP_PORT, E_STEP_PIN, OUTPUT);
   pin_mode(E_DIR_PORT, E_DIR_PIN, OUTPUT);

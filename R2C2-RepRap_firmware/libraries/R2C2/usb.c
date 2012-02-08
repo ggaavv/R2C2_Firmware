@@ -72,9 +72,6 @@ static TLineCoding LineCoding = {115200, 0, 0, 8};
 static U8 abBulkBuf[64];
 static U8 abClassReqData[8];
 
-// forward declaration of interrupt handler
-void USBIntHandler(void);
-
 static const U8 abDescriptors[] = {
 
 // device descriptor
@@ -303,7 +300,6 @@ static void USBFrameHandler(U16 wFrame)
 
     Simply calls the USB ISR
  */
-//void USBIntHandler(void)
 void USB_IRQHandler(void)
 {
   USBHwISR();

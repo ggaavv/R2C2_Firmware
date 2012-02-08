@@ -1,4 +1,3 @@
-
 # Hey Emacs, this is a -*- makefile -*-
 #
 # WinARM template makefile
@@ -132,12 +131,12 @@ OUTDIR = $(RUN_MODE)
 TARGET = project
 
 # Utility variables
-APPLIBDIR    = libraries
+APPLIBDIR    = /Users/Gavin/git/R2C2_Firmware/R2C2-RepRap_firmware/libraries
+#APPLIBDIR    = libraries
 INCLUDES = $(APPLIBDIR)/CMSISv1p30_LPC17xx/inc \
 	 $(APPLIBDIR)/LPCUSB/inc \
 	 $(APPLIBDIR)/NXP/Drivers/include \
-	 $(APPLIBDIR)/FatFs/src \
-	 inc \
+	 $(APPLIBDIR)/FatFs/src
 
 # List C source files here. (C dependencies are automatically generated.)
 # use file-extension c for "c-only"-files
@@ -155,6 +154,7 @@ SRC =	$(APPLIBDIR)/LPCUSB/src/usbcontrol.c \
 	$(APPLIBDIR)/NXP/Drivers/source/lpc17xx_ssp.c \
 	$(APPLIBDIR)/FatFs/src/ff.c \
 	$(APPLIBDIR)/FatFs/src/fattime.c \
+	delay.c \
 	main.c	\
 	blockdev_sd.c \
 	blockdev_fat.c \
@@ -164,7 +164,7 @@ SRC =	$(APPLIBDIR)/LPCUSB/src/usbcontrol.c \
 	sbl_iap.c \
 	spi.c \
 	debug.c \
-	uart.c \
+	uart.c
 
 # List C source files here which must be compiled in ARM-Mode (no -mthumb).
 # use file-extension c for "c-only"-files
@@ -193,8 +193,8 @@ ASRC = startup_LPC17xx.S
 ASRCARM  =
 
 # Place project-specific -D (define) and/or -U options for C here.
-CDEFS =
-CDEFS += -DUARTDEBUG
+CDEFS = -DUARTDEBUG
+#CDEFS += -DUARTDEBUG
 # enables parameter-checking in NXP's library
 #CDEFS += -DDEBUG
 #CDEFS += -DWITH_USB_MS=1
@@ -524,7 +524,7 @@ end:
 	@echo $(MSG_END)
 
 # Display sizes of sections.
-ELFSIZE = $(SIZE) -A $(OUTDIR)/$(TARGET).elf | egrep '^(section|Total|\.(text|data|bss|stack|heap))'
+ELFSIZE = $(SIZE) -A $(OUTDIR)/$(TARGET).elf
 sizebefore:
 #	@if [ -f  $(OUTDIR)/$(TARGET).elf ]; then echo; echo $(MSG_SIZE_BEFORE); $(ELFSIZE); echo; fi
 

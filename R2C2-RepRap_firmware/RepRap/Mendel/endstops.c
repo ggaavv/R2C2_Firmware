@@ -11,7 +11,7 @@ bool hit_home_stop_x (unsigned dir)
   }
   else
   {
-    return x_min() && (dir == 0);
+    return x_max() && (dir == 0);
   }
 }
 
@@ -24,7 +24,7 @@ bool hit_home_stop_y (unsigned dir)
   }
   else
   {
-    return y_min() && (dir == 0);
+    return y_max() && (dir == 0);
   }
 }
 
@@ -36,7 +36,7 @@ bool hit_home_stop_z (unsigned dir)
   }
   else
   {
-    return z_min() && (dir == 0);
+    return z_max() && (dir == 0);
   }
 }
 

@@ -47,15 +47,15 @@
 // From grbl/config.h
 
 
-#define X_STEP_BIT    20           
-#define Y_STEP_BIT    25       
-#define Z_STEP_BIT    29       
-#define E_STEP_BIT    10       
+#define X_STEP_BIT    X_STEP_PIN
+#define Y_STEP_BIT    Y_STEP_PIN
+#define Z_STEP_BIT    Z_STEP_PIN
+#define E_STEP_BIT    E_STEP_PIN
 
-#define X_DIRECTION_BIT   23     
-#define Y_DIRECTION_BIT   26   
-#define Z_DIRECTION_BIT   0   
-#define E_DIRECTION_BIT   11   
+#define X_DIRECTION_BIT   X_DIR_PIN
+#define Y_DIRECTION_BIT   Y_DIR_PIN
+#define Z_DIRECTION_BIT   Z_DIR_PIN
+#define E_DIRECTION_BIT   E_DIR_PIN
 
 // This parameter sets the delay time before disabling the steppers after the final block of movement.
 // A short delay ensures the steppers come to a complete stop and the residual inertial force in the 
@@ -96,7 +96,11 @@
 
 // end
 
-#define LIMIT_MASK ((1<<X_LIMIT_BIT)|(1<<Y_LIMIT_BIT)|(1<<Z_LIMIT_BIT)) // All limit bits
+// TODO:  LIMIT MASK NEVER USED
+//#define LIMIT_MASK ((1<<X_LIMIT_BIT)|(1<<Y_LIMIT_BIT)|(1<<Z_LIMIT_BIT)) // All limit bits
+#define LIMIT_MASK ((1<<X_MIN_PIN)|(1<<X_MAX_PIN)|(1<<Y_MIN_PIN)|(1<<Y_MAX_PIN)|(1<<Z_MIN_PIN)|(1<<Z_MAX_PIN)) // All limit bits
+#define LIMIT_MIN_MASK ((1<<X_MIN_PIN)|(1<<Y_MIN_PIN)|(1<<Z_MIN_PIN)) // Min limit bits
+#define LIMIT_MAX_MASK ((1<<X_MAX_PIN)|(1<<Y_MAX_PIN)|(1<<Z_MAX_PIN)) // Max limit bits
 #define STEP_MASK ((1<<X_STEP_BIT)|(1<<Y_STEP_BIT)|(1<<Z_STEP_BIT)) // All step bits
 #define DIRECTION_MASK ((1<<X_DIRECTION_BIT)|(1<<Y_DIRECTION_BIT)|(1<<Z_DIRECTION_BIT)) // All direction bits
 #define STEPPING_MASK (STEP_MASK | DIRECTION_MASK) // All stepping-related bits (step/direction)
