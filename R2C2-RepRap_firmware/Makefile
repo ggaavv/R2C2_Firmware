@@ -1,8 +1,8 @@
 
 # Hey Emacs, this is a -*- makefile -*-
 #
-# WinARM template makefile 
-# by Martin Thomas, Kaiserslautern, Germany 
+# WinARM template makefile
+# by Martin Thomas, Kaiserslautern, Germany
 # <eversmith(at)heizung-thomas(dot)de>
 #
 # Released to the Public Domain
@@ -53,35 +53,35 @@
 # - 13. Sep. 2007  - create assembler from c-sources fixed (make foo.s for foo.c) (mth)
 #                  - IMGEXT no longer used and removed (mth)
 #                  - moved some entries (mth)
-# - 25. Oct. 2007  - reverted 20070328-change (b/o "race condition" with 
+# - 25. Oct. 2007  - reverted 20070328-change (b/o "race condition" with
 #                    make clean all or when called from Eclipse) (mth)
 #                  - removed "for flash" from objdump message-string (mth)
 #                  - added same remarks (mth)
-# - 30. Oct. 2007  - Support for an output-directory with all files 
+# - 30. Oct. 2007  - Support for an output-directory with all files
 #                    created during "make all". (mth)
-#                  - modified targets which creates assembler (lower-case s) 
+#                  - modified targets which creates assembler (lower-case s)
 #                    from C-source using make <.c-file w/o ext.>.s (mth)
 #                  - removed redundant/unused defines, overall cleanup (mth)
 # - 10. Nov. 2007  - renamed TCHAIN to TCHAIN_PREFIX, other minor cleanup (mth)
 # - 13. Mar. 2008  - renamed FORMAT to LOADFORMAT, edited some comments/messages (mth)
 # - 13. Apr. 2009  - OpenOCD options for batch-programming (make program) (mth)
 # -  1. May  2009  - replaced SUBMDL with CHIP (mth)
-# - 15. Jul. 2009  - ComSpec environment-variable to select host-OS, should 
+# - 15. Jul. 2009  - ComSpec environment-variable to select host-OS, should
 #                    increase compatibility (mth)
 # -  1. Sep. 2009  - rename ROM_RUN->FLASH_RUN, VECT_TAB_ROM->VECT_TAB_FLASH (mth)
 # - 11. Sep. 2009  - new target to create output directories. attempt for better
 #                    "Win32 only" support (without "Unix"-shell and -tools) (mth)
 #                    This is much faster on Win32 then MSYS/MinGW or Cygwin. (mth)
-# -  5. Dec. 2009  - automatic selection of gcc or g++ for linking. g++ used when C++ 
+# -  5. Dec. 2009  - automatic selection of gcc or g++ for linking. g++ used when C++
 #                    source-files are listed. -nostartfiles not used for C++ (mth)
 # - 16. May. 2010  - on Win32 use set instead of env to get environment, removed
 #                    flashing with uVision, added BOARD to CDEFS and ADEFS, phony
 #                    targets listed in one line, removed setting for output-format
 #                    and always create both (.hex and .bin), added debug-format gdb,
-#                    rename AT91LIBNOWARN to DISABLESPECIALWARNINGS, removed target 
+#                    rename AT91LIBNOWARN to DISABLESPECIALWARNINGS, removed target
 #                    finished, remark on rm/cs-rm, other minor clean-ups, tested
 #                    with GNU make version 3.81 from CS and Cygwin (mth)
-# - 13. Jun. 2010  - Trigger build when non-source files have changed 
+# - 13. Jun. 2010  - Trigger build when non-source files have changed
 #                    (see BUILDONCHANGE). (mth)
 
 
@@ -95,7 +95,7 @@ TCHAIN_PREFIX = arm-none-eabi-
 REMOVE_CMD=rm
 #REMOVE_CMD=cs-rm
 
-# YES enables -mthumb option to flags for source-files listed 
+# YES enables -mthumb option to flags for source-files listed
 # in SRC and CPPSRC and -mthumb-interwork option for all source
 USE_THUMB_MODE = YES
 #USE_THUMB_MODE = NO
@@ -110,7 +110,7 @@ BOARD    = USER
 
 # *** This example only supports "FLASH_RUN" ***
 # RUN_MODE is passed as define and used for the linker-script filename,
-# the user has to implement the necessary operations for 
+# the user has to implement the necessary operations for
 # the used mode (i.e. no copy of .data, remapping...)
 # Create FLASH-Image
 RUN_MODE=FLASH_RUN
@@ -192,17 +192,16 @@ SRC = \
 # List C source files here which must be compiled in ARM-Mode (no -mthumb).
 # use file-extension c for "c-only"-files
 ## just for testing, timer.c classcould be compiled in thumb-mode too
-SRCARM = 
+SRCARM =
 
 # List C++ source files here.
 # use file-extension .cpp for C++-files (not .C)
-CPPSRC = 
+CPPSRC =
 
 # List C++ source files here which must be compiled in ARM-Mode.
 # use file-extension .cpp for C++-files (not .C)
 #CPPSRCARM = $(TARGET).cpp
 CPPSRCARM = 
- 
 # List Assembler source files here.
 # Make them always end in a capital .S. Files ending in a lowercase .s
 # will not be considered source files but generated files (assembler
@@ -235,12 +234,12 @@ EXTRAINCDIRS  = $(INCLUDES)
 #     EXTRA_LIBS = xyz abc efsl
 #    for newlib-lpc (file: libnewlibc-lpc.a):
 #     EXTRA_LIBS = newlib-lpc
-EXTRA_LIBS = 
+EXTRA_LIBS =
 
 # List non-source files which should trigger build here
 #    Typically the Makefile and selected header-files
 #    Entries must be seperated by a space.
-BUILDONCHANGE = Makefile 
+BUILDONCHANGE = Makefile
 
 # Path to linker-scripts (see -T option)
 LINKERSCRIPTPATH = .
@@ -251,14 +250,14 @@ LINKERSCRIPTINC  = .
 
 # List any extra directories to look for library files here.
 #     Each directory must be seperated by a space.
-EXTRA_LIBDIRS = 
+EXTRA_LIBDIRS =
 
-# Optimization level, can be [0, 1, 2, 3, s]. 
+# Optimization level, can be [0, 1, 2, 3, s].
 # 0 = Turn off optimization. Reduce compilation time and make debugging
 #     produce the expected results.
 # 1 = The compiler tries to reduce code size and execution time, without
 #     performing any optimizations that take a great deal of compilation time.
-# 2 = GCC performs nearly all supported optimizations that do not involve a 
+# 2 = GCC performs nearly all supported optimizations that do not involve a
 #     space-speed tradeoff. As compared to -O1, this option increases
 #     both compilation time and the performance of the generated code.
 # 3 = Optimize yet more. Turns on -finline-functions and more.
@@ -288,8 +287,8 @@ CSTANDARD = -std=gnu99
 #FLASH_TOOL = LPC21ISP
 FLASH_TOOL = R2C2
 
-# Some warnings can be disabled by this setting 
-# (useful for the old single-file AT91-lib) 
+# Some warnings can be disabled by this setting
+# (useful for the old single-file AT91-lib)
 #  yes - disable some warnings
 #  no  - keep default settings
 #DISABLESPECIALWARNINGS = yes
@@ -297,8 +296,8 @@ DISABLESPECIALWARNINGS = no
 
 
 # ---------------------------------------------------------------------------
-# Options for lpc21isp by Martin Maurer 
-# lpc21isp only supports NXP LPC and Analog ADuC ARMs though the 
+# Options for lpc21isp by Martin Maurer
+# lpc21isp only supports NXP LPC and Analog ADuC ARMs though the
 # integrated uart-bootloader (ISP)
 #
 # Settings and variables:
@@ -309,7 +308,7 @@ LPC21ISP_BAUD = 57600
 LPC21ISP_XTAL = 12000
 # other options:
 # -debug: verbose output
-# -control: enter bootloader via RS232 DTR/RTS (only if hardware 
+# -control: enter bootloader via RS232 DTR/RTS (only if hardware
 #           supports this feature - see NXP AppNote)
 LPC21ISP_OPTIONS = -control
 #LPC21ISP_OPTIONS += -debug
@@ -370,9 +369,9 @@ ADEFS += -D$(RUN_MODE) -D$(CHIP) -D$(BOARD)
 ifeq ($(USE_THUMB_MODE),YES)
 THUMB    = -mthumb
 THUMB_IW = -mthumb-interwork
-else 
-THUMB    = 
-THUMB_IW = 
+else
+THUMB    =
+THUMB_IW =
 endif
 
 #  -g*:          generate debugging information
@@ -385,14 +384,14 @@ endif
 # Flags for C and C++ (arm-elf-gcc/arm-elf-g++)
 CFLAGS =  -g
 CFLAGS += -O$(OPT)
-CFLAGS += -mcpu=$(MCU) $(THUMB_IW) 
+CFLAGS += -mcpu=$(MCU) $(THUMB_IW)
 CFLAGS += $(CDEFS)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS)) -I.
 # when using ".ramfunc"s without attribute longcall:
 #CFLAGS += -mlong-calls
 # -mapcs-frame is important if gcc's interrupt attributes are used
-# (at least from my eabi tests), not needed if assembler-wrappers are used 
-#CFLAGS += -mapcs-frame 
+# (at least from my eabi tests), not needed if assembler-wrappers are used
+#CFLAGS += -mapcs-frame
 #CFLAGS += -fomit-frame-pointer
 CFLAGS += -ffunction-sections -fdata-sections
 CFLAGS += -Wall -Wextra
@@ -401,19 +400,19 @@ CFLAGS += -Wimplicit -Wcast-align -Wpointer-arith
 CFLAGS += -Wredundant-decls -Wshadow -Wcast-qual -Wcast-align
 CFLAGS += -Wa,-adhlns=$(addprefix $(OUTDIR)/, $(notdir $(addsuffix .lst, $(basename $<))))
 # Compiler flags to generate dependency files:
-#CFLAGS += -MD -MP -MF $(OUTDIR)/dep/$(@F).d 
+#CFLAGS += -MD -MP -MF $(OUTDIR)/dep/$(@F).d
 CFLAGS += -MMD -MP -MF $(OUTDIR)/dep/$(@F).d
 ##testing##CFLAGS += -MF"$@" -MG -MM -MP -MT"$@" -MT"$(<:.c=.o)"
 #CFLAGS += -fno-dwarf2-cfi-asm
 #CFLAGS += -fno-strict-aliasing -Wno-nested-externs
 
 # flags only for C
-CONLYFLAGS += -Wnested-externs 
+CONLYFLAGS += -Wnested-externs
 CONLYFLAGS += $(CSTANDARD)
 
 ifeq ($(DISABLESPECIALWARNINGS),yes)
 CFLAGS += -Wno-cast-qual
-CONLYFLAGS += -Wno-missing-prototypes 
+CONLYFLAGS += -Wno-missing-prototypes
 CONLYFLAGS += -Wno-strict-prototypes
 CONLYFLAGS += -Wno-missing-declarations
 endif
@@ -441,7 +440,7 @@ CPLUSPLUS_LIB = -lstdc++
 #    -Map:      create map file
 #    --cref:    add cross reference to  map file
 LDFLAGS = -Wl,-Map=$(OUTDIR)/$(TARGET).map,--cref,--gc-sections
-LDFLAGS += -lgcc -lc -lm 
+LDFLAGS += -lgcc -lc -lm
 #LDFLAGS += $(CPLUSPLUS_LIB)
 LDFLAGS += $(patsubst %,-L%,$(EXTRA_LIBDIRS))
 LDFLAGS += $(patsubst %,-L%,$(LINKERSCRIPTINC))
@@ -450,7 +449,7 @@ LDFLAGS += $(patsubst %,-l%,$(EXTRA_LIBS))
 # Set linker-script name depending on selected run-mode and chip
 ifeq ($(RUN_MODE),RAM_RUN)
 LDFLAGS +=-T$(LINKERSCRIPTPATH)/$(CHIP)_ram.ld
-else 
+else
 LDFLAGS +=-T$(LINKERSCRIPTPATH)/$(CHIP)_flash.ld
 endif
 
@@ -523,7 +522,7 @@ all: begin createdirs gccversion build sizeafter end
 build: elf lss sym hex bin
 
 elf: $(OUTDIR)/$(TARGET).elf
-lss: $(OUTDIR)/$(TARGET).lss 
+lss: $(OUTDIR)/$(TARGET).lss
 sym: $(OUTDIR)/$(TARGET).sym
 hex: $(OUTDIR)/$(TARGET).hex
 bin: $(OUTDIR)/$(TARGET).bin
@@ -547,7 +546,7 @@ end:
 	@echo $(MSG_END)
 
 # Display sizes of sections.
-ELFSIZE = $(SIZE) -A  $(OUTDIR)/$(TARGET).elf
+ELFSIZE = $(SIZE) -A $(OUTDIR)/$(TARGET).elf
 sizebefore:
 #	@if [ -f  $(OUTDIR)/$(TARGET).elf ]; then echo; echo $(MSG_SIZE_BEFORE); $(ELFSIZE); echo; fi
 
@@ -557,7 +556,7 @@ sizeafter:
 	$(ELFSIZE)
 
 # Display compiler version information.
-gccversion : 
+gccversion :
 	@$(CC) --version
 
 # Program the device.
@@ -565,7 +564,7 @@ ifeq ($(FLASH_TOOL),OPENOCD)
 # Program the device with Dominic Rath's OPENOCD in "batch-mode"
 program: $(OUTDIR)/$(TARGET).elf
 	@echo "Programming with OPENOCD"
-ifdef SHELL_IS_WIN32 
+ifdef SHELL_IS_WIN32
 	$(subst /,\,$(OOCD_EXE)) $(OOCD_CL)
 else
 	$(OOCD_EXE) $(OOCD_CL)

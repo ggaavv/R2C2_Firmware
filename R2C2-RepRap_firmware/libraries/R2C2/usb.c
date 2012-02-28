@@ -302,6 +302,7 @@ static void USBFrameHandler(U16 wFrame)
  */
 void USB_IRQHandler(void)
 {
+	LPC_GPIO1->FIOPIN ^= 1 << 23; // Toggle P1.29
   USBHwISR();
 }
 
@@ -311,6 +312,8 @@ void USBSerial_Init(void)
 {
   // initialise stack
   USBInit();
+	LPC_GPIO1->FIODIR |= 1 << 23; // P1.29 connected to LED
+
 
   // register descriptors
   USBRegisterDescriptors(abDescriptors);
