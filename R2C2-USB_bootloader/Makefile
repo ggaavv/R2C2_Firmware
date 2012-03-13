@@ -164,7 +164,8 @@ SRC =	$(APPLIBDIR)/LPCUSB/src/usbcontrol.c \
 	sbl_iap.c \
 	spi.c \
 	debug.c \
-	uart.c
+	uart.c \
+	ios.c
 
 # List C source files here which must be compiled in ARM-Mode (no -mthumb).
 # use file-extension c for "c-only"-files
