@@ -37,6 +37,8 @@
 #include "diskio.h"
 #include "spi.h"
 #include "sersendf.h"
+#include "pinout.h"
+#include "ios.h"
 
 #define xmit_spi(dat)  spi_rw(dat)
 
@@ -83,7 +85,9 @@ static inline void select_card()
 	// SSEL1 P0.6 low
 //	GPIO_ClearValue(0, (1 << 6));
         // SSEL0 P0.6 low
-        GPIO_ClearValue(2, (1 << 0));
+//        GPIO_ClearValue(2, (1 << 0));
+	digital_write(SD_SSEL_PORT, SD_SSEL_BIT, LOW);
+
 }
 
 static inline void de_select_card()
@@ -91,7 +95,8 @@ static inline void de_select_card()
 	// SSEL1 high
 //	GPIO_SetValue(0, (1 << 6));
         // SSEL1 high
-        GPIO_SetValue(2, (1 << 0));
+//        GPIO_SetValue(2, (1 << 0));
+    	digital_write(SD_SSEL_PORT, SD_SSEL_BIT, HIGH);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -122,7 +127,7 @@ static void release_spi (void)
 /*-----------------------------------------------------------------------*/
 /* Power up/down                                                         */
 /*-----------------------------------------------------------------------*/
-static void power_on()
+static void power_on_sd()
 {
 	for (Timer1 = 25; Timer1; );	/* Wait for 250ms */
 
@@ -131,7 +136,7 @@ static void power_on()
 	de_select_card();
 }
 
-static void power_off()
+static void power_off_sd()
 {
 	if (!(Stat & STA_NOINIT)) {
 		select_card();
@@ -252,7 +257,7 @@ DSTATUS MMC_disk_initialize(void)
 
 	if (Stat & STA_NODISK) return Stat;	/* No card in the socket */
 
-	power_on();							/* Force socket power on and initialize interface */
+	power_on_sd();							/* Force socket power on and initialize interface */
 	spi_set_speed(INTERFACE_SLOW);
 	for (n = 10; n; n--) rcvr_spi();	/* 80 dummy clocks with card de-selected */
 
@@ -288,7 +293,7 @@ DSTATUS MMC_disk_initialize(void)
 		Stat &= ~STA_NOINIT;		/* Clear STA_NOINIT */
 		spi_set_speed(INTERFACE_FAST);
 	} else {			/* Initialization failed */
-		power_off();
+		power_off_sd();
 		sersendf("\nmemory card init failed\n");
 	}
 

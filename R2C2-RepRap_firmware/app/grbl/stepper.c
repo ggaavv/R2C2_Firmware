@@ -46,13 +46,9 @@
 //#include "nuts_bolts.h"
 #include "planner.h"
 //#include "limits.h"
+#include "pinout.h"
 
 #include "endstops.h"
-
-// Some useful constants
-#define STEP_MASK       ((1<<X_STEP_BIT)|(1<<Y_STEP_BIT)|(1<<Z_STEP_BIT)) // All step bits
-#define DIRECTION_MASK  ((1<<X_DIRECTION_BIT)|(1<<Y_DIRECTION_BIT)|(1<<Z_DIRECTION_BIT)) // All direction bits
-#define STEPPING_MASK   (STEP_MASK | DIRECTION_MASK) // All stepping-related bits (step/direction)
 
 #define TICKS_PER_MICROSECOND (F_CPU/1000000)
 #define CYCLES_PER_ACCELERATION_TICK ((TICKS_PER_MICROSECOND*1000000)/ACCELERATION_TICKS_PER_SECOND)
@@ -140,30 +136,33 @@ static inline void  set_direction_pins (void)
 {
   // x_direction( (direction_bits & (1<<X_DIRECTION_BIT))?0:1);
 
-  if (direction_bits & X_DIR_PIN)
-    GPIO_ClearValue (X_DIR_PORT, X_DIR_PIN);
+  if (direction_bits & X_DIR_BIT)
+    GPIO_ClearValue (X_DIR_PORT, X_DIR_BIT);
   else
-    GPIO_SetValue (X_DIR_PORT, X_DIR_PIN);
+    GPIO_SetValue (X_DIR_PORT, X_DIR_BIT);
   
   // y_direction( (direction_bits & (1<<Y_DIRECTION_BIT))?0:1);
-  if (direction_bits & Y_DIR_PIN)
-    GPIO_ClearValue (Y_DIR_PORT, Y_DIR_PIN);
+
+  if (direction_bits & Y_DIR_BIT)
+    GPIO_ClearValue (Y_DIR_PORT, Y_DIR_BIT);
   else
-    GPIO_SetValue (Y_DIR_PORT, Y_DIR_PIN);
+    GPIO_SetValue (Y_DIR_PORT, Y_DIR_BIT);
       
   // z_direction( (direction_bits & (1<<Z_DIRECTION_BIT))?0:1);
-  if (direction_bits & Z_DIR_PIN)
-    GPIO_ClearValue (Z_DIR_PORT, Z_DIR_PIN);
+
+  if (direction_bits & Z_DIR_BIT)
+    GPIO_ClearValue (Z_DIR_PORT, Z_DIR_BIT);
   else
-    GPIO_SetValue (Z_DIR_PORT, Z_DIR_PIN);
+    GPIO_SetValue (Z_DIR_PORT, Z_DIR_BIT);
 
   // e_direction( (direction_bits & (1<<E_DIRECTION_BIT))?0:1);
-  if (direction_bits & E_DIR_PIN)
-    GPIO_ClearValue (E_DIR_PORT, E_DIR_PIN);
+
+  if (direction_bits & E_DIR_BIT)
+    GPIO_ClearValue (E_DIR_PORT, E_DIR_BIT);
   else
-    GPIO_SetValue (E_DIR_PORT, E_DIR_PIN);
-    
-    
+    GPIO_SetValue (E_DIR_PORT, E_DIR_BIT);
+
+
 }
 
 // step selected pins (output high)
@@ -171,23 +170,23 @@ static inline void  set_step_pins (void)
 {
   // XYZ Steppers on same port
   #ifdef STEP_LED_FLASH_VARIABLE
-  if (step_bits_xyz & (1<<X_STEP_BIT))
+  if (step_bits_xyz & X_STEP_BIT)
   {
     inc_led_count (&led_count[X_AXIS], (1<<X_AXIS));
   }
-  if (step_bits_xyz & (1<<Y_STEP_BIT))
+  if (step_bits_xyz & Y_STEP_BIT)
   {
     inc_led_count (&led_count[Y_AXIS], (1<<Y_AXIS));
   }  
-  if (step_bits_xyz & (1<<Z_STEP_BIT))
+  if (step_bits_xyz & Z_STEP_BIT)
   {
     inc_led_count (&led_count[Z_AXIS], (1<<Z_AXIS));
   }
 #endif
   // XYZ Steppers on different ports
-  GPIO_SetValue (X_STEP_PORT, step_bits_xyz & X_STEP_PIN);
-  GPIO_SetValue (Y_STEP_PORT, step_bits_xyz & Y_STEP_PIN);
-  GPIO_SetValue (Z_STEP_PORT, step_bits_xyz & Z_STEP_PIN);
+  GPIO_SetValue (X_STEP_PORT, step_bits_xyz & X_STEP_BIT);
+  GPIO_SetValue (Y_STEP_PORT, step_bits_xyz & Y_STEP_BIT);
+  GPIO_SetValue (Z_STEP_PORT, step_bits_xyz & Z_STEP_BIT);
   // XYZ Steppers on same port
 //  GPIO_SetValue (X_STEP_PORT, step_bits_xyz);
     
@@ -195,7 +194,7 @@ static inline void  set_step_pins (void)
   if (step_bits_e)
   {
 #ifdef STEP_LED_FLASH_VARIABLE
-    if (step_bits_e & (1<<E_STEP_BIT))
+    if (step_bits_e & E_STEP_BIT)
     {
       inc_led_count (&led_count[E_AXIS], (1<<E_AXIS));
     }
@@ -210,22 +209,22 @@ static inline void  set_step_pins (void)
 static inline void  clear_all_step_pins (void) 
 {
   // Note: XYZ on different ports
-  GPIO_ClearValue (X_STEP_PORT, X_STEP_PIN);
-  GPIO_ClearValue (Y_STEP_PORT, Y_STEP_PIN);
-  GPIO_ClearValue (Z_STEP_PORT, Z_STEP_PIN);
+  GPIO_ClearValue (X_STEP_PORT, X_STEP_BIT);
+  GPIO_ClearValue (Y_STEP_PORT, Y_STEP_BIT);
+  GPIO_ClearValue (Z_STEP_PORT, Z_STEP_BIT);
   // Note: XYZ on same port 
   /* GPIO_ClearValue (X_STEP_PORT, X_STEP_PIN | Y_STEP_PIN | Z_STEP_PIN); */
   
-  GPIO_ClearValue (E_STEP_PORT, E_STEP_PIN);
+  GPIO_ClearValue (E_STEP_PORT, E_STEP_BIT);
 }
 
 // unstep selected pins
 static inline void  clear_step_pins (void) 
 {
   // XYZ Steppers on different ports
-  GPIO_ClearValue (X_STEP_PORT, step_bits_xyz & X_STEP_PIN);
-  GPIO_ClearValue (Y_STEP_PORT, step_bits_xyz & Y_STEP_PIN);
-  GPIO_ClearValue (Z_STEP_PORT, step_bits_xyz & Z_STEP_PIN);
+  GPIO_ClearValue (X_STEP_PORT, step_bits_xyz & X_STEP_BIT);
+  GPIO_ClearValue (Y_STEP_PORT, step_bits_xyz & Y_STEP_BIT);
+  GPIO_ClearValue (Z_STEP_PORT, step_bits_xyz & Z_STEP_BIT);
   // XYZ Steppers on same port
 //  GPIO_ClearValue (X_STEP_PORT, step_bits_xyz);
     
@@ -246,21 +245,21 @@ static inline void  clear_step_pins_by_state (void)
   
   if ((led_on & (1<<X_AXIS)) == 0)
   {
-    step_pins |= X_STEP_PIN;
+    step_pins |= X_STEP_BIT;
     // XYZ Steppers on different ports
-    GPIO_ClearValue (X_STEP_PORT, X_STEP_PIN);
+    GPIO_ClearValue (X_STEP_PORT, X_STEP_BIT);
   }
   if ((led_on & (1<<Y_AXIS)) == 0)
   {
-    step_pins |= Y_STEP_PIN;
+    step_pins |= Y_STEP_BIT;
     // XYZ Steppers on different ports
-    GPIO_ClearValue (Y_STEP_PORT, Y_STEP_PIN);
+    GPIO_ClearValue (Y_STEP_PORT, Y_STEP_BIT);
   }
   if ((led_on & (1<<Z_AXIS)) == 0)
   {
-    step_pins |= Z_STEP_PIN;
+    step_pins |= Z_STEP_BIT;
     // XYZ Steppers on different ports
-    GPIO_ClearValue (Z_STEP_PORT, Z_STEP_PIN);
+    GPIO_ClearValue (Z_STEP_PORT, Z_STEP_BIT);
   }
 
   // XYZ Steppers on same port
@@ -268,7 +267,7 @@ static inline void  clear_step_pins_by_state (void)
 
   if ((led_on & (1<<E_AXIS)) == 0)
   {
-    GPIO_ClearValue (E_STEP_PORT, E_STEP_PIN);
+    GPIO_ClearValue (E_STEP_PORT, E_STEP_BIT);
   }
 }
 
@@ -378,6 +377,7 @@ static uint8_t iterate_trapezoid_cycle_counter()
 //SIGNAL(TIMER1_COMPA_vect)
 void st_interrupt (void)
 {        
+
   // TODO: Check if the busy-flag can be eliminated by just disabeling this interrupt while we are in it
   
   if(busy){ return; } // The busy-flag is used to avoid reentering this interrupt
@@ -431,23 +431,23 @@ void st_interrupt (void)
       step_bits_xyz = step_bits_e = 0;
       counter_x += current_block->steps_x;
       if (counter_x > 0) {
-        step_bits_xyz |= (1<<X_STEP_BIT);
+        step_bits_xyz |= X_STEP_BIT;
         counter_x -= current_block->step_event_count;
       }
       counter_y += current_block->steps_y;
       if (counter_y > 0) {
-        step_bits_xyz |= (1<<Y_STEP_BIT);
+        step_bits_xyz |= Y_STEP_BIT;
         counter_y -= current_block->step_event_count;
       }
       counter_z += current_block->steps_z;
       if (counter_z > 0) {
-        step_bits_xyz |= (1<<Z_STEP_BIT);
+        step_bits_xyz |= Z_STEP_BIT;
         counter_z -= current_block->step_event_count;
       }
       
       counter_e += current_block->steps_e;
       if (counter_e > 0) {
-        step_bits_e |= (1<<E_STEP_BIT);
+        step_bits_e |= E_STEP_BIT;
         counter_e -= current_block->step_event_count;
       }
 
@@ -459,9 +459,9 @@ void st_interrupt (void)
 
       if (current_block->check_endstops)
       {
-        if ( (current_block->steps_x && hit_home_stop_x (direction_bits & (1<<X_DIRECTION_BIT)) ) ||
-             (current_block->steps_y && hit_home_stop_y (direction_bits & (1<<Y_DIRECTION_BIT)) ) ||
-             (current_block->steps_z && hit_home_stop_z (direction_bits & (1<<Z_DIRECTION_BIT)) )
+        if ( (current_block->steps_x && hit_home_stop_x (direction_bits & X_DIR_BIT) ) ||
+             (current_block->steps_y && hit_home_stop_y (direction_bits & Y_DIR_BIT) ) ||
+             (current_block->steps_z && hit_home_stop_z (direction_bits & Z_DIR_BIT) )
            )
         {
           step_events_completed = current_block->step_event_count;
@@ -550,7 +550,7 @@ void st_interrupt (void)
     // Still no block? Set the stepper pins to low before sleeping.
     step_bits_xyz = step_bits_e = 0;
   }          
-  
+
 #ifdef STEP_LED_NONE
   clear_all_step_pins ();
 #else
@@ -586,14 +586,14 @@ void accelCallback (tHwTimer *pTimer, uint32_t int_mask)
 void stepCallback (tHwTimer *pTimer, uint32_t int_mask)
 {
   (void)pTimer;
-  digital_write (DEBUG_PORT, DEBUG_PIN, 1);
+  digital_write (DEBUG_PORT, DEBUG_BIT, 1);
 
 //  if (int_mask & _BIT(TIM_MR0_INT))
   {
     // call stepper function
     st_interrupt();
   }
-  digital_write (DEBUG_PORT, DEBUG_PIN, 0);
+  digital_write (DEBUG_PORT, DEBUG_BIT, 0);
 }
 
 static void init_dac (void)
@@ -663,7 +663,7 @@ void st_init()
 #endif
 
   // setup debug pin
-  pin_mode(DEBUG_PORT, DEBUG_PIN, OUTPUT);
+  pin_mode(DEBUG_PORT, DEBUG_BIT, OUTPUT);
     
 #endif
   

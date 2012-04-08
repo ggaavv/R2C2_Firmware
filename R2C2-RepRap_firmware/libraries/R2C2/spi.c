@@ -34,6 +34,7 @@
 #include "lpc17xx_clkpwr.h"
 #include "lpc17xx_ssp.h"
 #include "spi.h"
+#include "ios.h"
 
 #include "pinout.h"
 
@@ -57,26 +58,36 @@ void spi_init(void)
   /* SSEL0 P0.16 as GPIO, pull-up mounted */
   PinCfg.Funcnum   = PINSEL_FUNC_0;
   PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
-  PinCfg.Pinmode   = PINSEL_PINMODE_PULLUP;
+  PinCfg.Pinmode   = PINSEL_PINMODE_TRISTATE; //external pullup
   PinCfg.Pinnum    = SD_SSEL_PIN;
   PinCfg.Portnum   = SD_SSEL_PORT;
-  GPIO_SetDir(SD_SSEL_PORT, SD_SSEL_PIN, 1);
   PINSEL_ConfigPin(&PinCfg);
+  pin_mode(SD_SSEL_PORT, SD_SSEL_BIT, OUTPUT);
+  digital_write(SD_SSEL_PORT, SD_SSEL_BIT, HIGH);
   /* SCK0 P0.15 alternate function 0b10 */
   PinCfg.Funcnum   = PINSEL_FUNC_2;
-  PinCfg.Pinmode   = PINSEL_PINMODE_PULLDOWN;
+  PinCfg.Pinmode   = PINSEL_PINMODE_TRISTATE;
   PinCfg.Pinnum    = SD_SCK_PIN;
   PinCfg.Portnum   = SD_SCK_PORT;
   PINSEL_ConfigPin(&PinCfg);
+  pin_mode(SD_SCK_PORT, SD_SCK_BIT, OUTPUT);
+  digital_write(SD_SCK_PORT, SD_SCK_BIT, HIGH);
   /* MISO0 P0.17 */
-  PinCfg.Pinmode   = PINSEL_PINMODE_PULLUP;
+  PinCfg.Funcnum   = PINSEL_FUNC_2;
+  PinCfg.Pinmode   = PINSEL_PINMODE_TRISTATE; //external pullup
   PinCfg.Pinnum    = SD_MISO_PIN;
   PinCfg.Portnum   = SD_MISO_PORT;
   PINSEL_ConfigPin(&PinCfg);
+  pin_mode(SD_MISO_PORT, SD_MISO_BIT, INPUT);
+//  digital_write(SD_MISO_PORT, SD_MISO_BIT, LOW);
   /* MOSI0 P0.18 */
+  PinCfg.Funcnum   = PINSEL_FUNC_2;
+  PinCfg.Pinmode   = PINSEL_PINMODE_TRISTATE; //external pullup
   PinCfg.Pinnum    = SD_MOSI_PIN;
   PinCfg.Portnum   = SD_MOSI_PORT;
   PINSEL_ConfigPin(&PinCfg);
+  pin_mode(SD_MOSI_PORT, SD_MOSI_BIT, OUTPUT);
+  digital_write(SD_MOSI_PORT, SD_MOSI_BIT, HIGH);
 
   /* initialize SSP configuration structure */
   SSP_ConfigStruct.CPHA = SSP_CPHA_FIRST;
@@ -112,19 +123,23 @@ void spi_close(void)
 
   PinCfg.Funcnum   = PINSEL_FUNC_0;
   PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
-  PinCfg.Pinmode   = PINSEL_PINMODE_PULLDOWN;
+  PinCfg.Pinmode   = PINSEL_PINMODE_TRISTATE;
   PinCfg.Pinnum    = SD_SSEL_PIN;
   PinCfg.Portnum   = SD_SSEL_PORT;
   PINSEL_ConfigPin(&PinCfg);
+  pin_mode(SD_SSEL_PORT, SD_SSEL_BIT, INPUT);
   PinCfg.Pinnum    = SD_SCK_PIN;
   PinCfg.Portnum   = SD_SCK_PORT;
   PINSEL_ConfigPin(&PinCfg);
+  pin_mode(SD_SCK_PORT, SD_SCK_BIT, INPUT);
   PinCfg.Pinnum    = SD_MISO_PIN;
   PinCfg.Portnum   = SD_MISO_PORT;
   PINSEL_ConfigPin(&PinCfg);
+  pin_mode(SD_MISO_PORT, SD_MISO_BIT, INPUT);
   PinCfg.Pinnum    = SD_MOSI_PIN;
   PinCfg.Portnum   = SD_MOSI_PORT;
   PINSEL_ConfigPin(&PinCfg);
+  pin_mode(SD_MOSI_PORT, SD_MOSI_BIT, INPUT);
 }
 
 uint8_t spi_rw( uint8_t out )

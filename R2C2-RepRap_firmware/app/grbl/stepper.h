@@ -46,17 +46,6 @@
 
 // From grbl/config.h
 
-
-#define X_STEP_BIT    X_STEP_PIN
-#define Y_STEP_BIT    Y_STEP_PIN
-#define Z_STEP_BIT    Z_STEP_PIN
-#define E_STEP_BIT    E_STEP_PIN
-
-#define X_DIRECTION_BIT   X_DIR_PIN
-#define Y_DIRECTION_BIT   Y_DIR_PIN
-#define Z_DIRECTION_BIT   Z_DIR_PIN
-#define E_DIRECTION_BIT   E_DIR_PIN
-
 // This parameter sets the delay time before disabling the steppers after the final block of movement.
 // A short delay ensures the steppers come to a complete stop and the residual inertial force in the 
 // CNC axes don't cause the axes to drift off position. This is particularly important when manually 
@@ -98,11 +87,11 @@
 
 // TODO:  LIMIT MASK NEVER USED
 //#define LIMIT_MASK ((1<<X_LIMIT_BIT)|(1<<Y_LIMIT_BIT)|(1<<Z_LIMIT_BIT)) // All limit bits
-#define LIMIT_MASK ((1<<X_MIN_PIN)|(1<<X_MAX_PIN)|(1<<Y_MIN_PIN)|(1<<Y_MAX_PIN)|(1<<Z_MIN_PIN)|(1<<Z_MAX_PIN)) // All limit bits
-#define LIMIT_MIN_MASK ((1<<X_MIN_PIN)|(1<<Y_MIN_PIN)|(1<<Z_MIN_PIN)) // Min limit bits
-#define LIMIT_MAX_MASK ((1<<X_MAX_PIN)|(1<<Y_MAX_PIN)|(1<<Z_MAX_PIN)) // Max limit bits
-#define STEP_MASK ((1<<X_STEP_BIT)|(1<<Y_STEP_BIT)|(1<<Z_STEP_BIT)) // All step bits
-#define DIRECTION_MASK ((1<<X_DIRECTION_BIT)|(1<<Y_DIRECTION_BIT)|(1<<Z_DIRECTION_BIT)) // All direction bits
+#define LIMIT_MASK (X_MIN__BIT|X_MAX__BIT|Y_MIN__BIT|Y_MAX__BIT|Z_MIN__BIT|Z_MAX__BIT) // All limit bits
+#define LIMIT_MIN_MASK (X_MIN_BIT|Y_MIN_BIT|Z_MIN_BIT) // Min limit bits
+#define LIMIT_MAX_MASK (X_MAX_BIT|Y_MAX_BIT|Z_MAX_BIT) // Max limit bits
+#define STEP_MASK (X_STEP_BIT|Y_STEP_BIT|Z_STEP_BIT) // All step bits
+#define DIRECTION_MASK (X_DIR_BIT|Y_DIR_BIT|Z_DIR_BIT) // All direction bits
 #define STEPPING_MASK (STEP_MASK | DIRECTION_MASK) // All stepping-related bits (step/direction)
 
 // Initialize and start the stepper motor subsystem

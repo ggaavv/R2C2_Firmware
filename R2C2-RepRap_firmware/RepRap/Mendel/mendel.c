@@ -64,58 +64,107 @@ void adc_init(void)
   PinCfg.Portnum = EXTRUDER_0_SENSOR_ADC_PORT;
   PinCfg.Pinnum = EXTRUDER_0_SENSOR_ADC_PIN;
   PINSEL_ConfigPin(&PinCfg);
+  pin_mode(EXTRUDER_0_SENSOR_ADC_PORT, EXTRUDER_0_SENSOR_ADC_BIT, INPUT);
 
   PinCfg.Funcnum = PINSEL_FUNC_2; /* ADC function */
   PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
-  PinCfg.Pinmode = PINSEL_PINMODE_TRISTATE;
+//  PinCfg.Pinmode = PINSEL_PINMODE_TRISTATE;
+  PinCfg.Pinmode = PINSEL_PINMODE_PULLDOWN;
   PinCfg.Portnum = HEATED_BED_0_ADC_PORT;
   PinCfg.Pinnum = HEATED_BED_0_ADC_PIN;
   PINSEL_ConfigPin(&PinCfg);
+  pin_mode(HEATED_BED_0_ADC_PORT, EXTRUDER_0_SENSOR_ADC_BIT, INPUT);
+
+  PinCfg.Funcnum = PINSEL_FUNC_2; /* Unused ADC pins */
+  PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
+  PinCfg.Pinmode = PINSEL_PINMODE_PULLDOWN;
+  PinCfg.Portnum = 0;
+  PinCfg.Pinnum = 23;
+  PINSEL_ConfigPin(&PinCfg);
+  pin_mode(0, 1 << 23, INPUT);
+
+  PinCfg.Funcnum = PINSEL_FUNC_2; /* Unused ADC pins */
+  PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
+  PinCfg.Pinmode = PINSEL_PINMODE_PULLDOWN;
+  PinCfg.Portnum = 0;
+  PinCfg.Pinnum = 24;
+  PINSEL_ConfigPin(&PinCfg);
+  pin_mode(0, 1 << 24, INPUT);
+
 
   ADC_Init(LPC_ADC, 200000); /* ADC conversion rate = 200Khz */
 }
 
 void io_init(void)
 {
+	uart_init();
   /* Extruder 0 Heater pin */
-  pin_mode(EXTRUDER_0_HEATER_PORT, EXTRUDER_0_HEATER_PIN, OUTPUT);
+  pin_mode(EXTRUDER_0_HEATER_PORT, EXTRUDER_0_HEATER_BIT, OUTPUT);
   extruder_heater_off();
 
   /* Heated Bed 0 Heater pin */
-  pin_mode(HEATED_BED_0_HEATER_PORT, HEATED_BED_0_HEATER_PIN, OUTPUT);
+  pin_mode(HEATED_BED_0_HEATER_PORT, HEATED_BED_0_HEATER_BIT, OUTPUT);
   heated_bed_off();
 
+  /* Pull ups for all opto switches */
+  PINSEL_CFG_Type PinCfg;
+  PinCfg.Funcnum = PINSEL_FUNC_0; /* GPIO function */
+  PinCfg.OpenDrain = PINSEL_PINMODE_NORMAL;
+  PinCfg.Pinmode = PINSEL_PINMODE_PULLUP;
+
+  PinCfg.Portnum = X_MIN_PORT;
+  PinCfg.Pinnum = X_MIN_PIN;
+  PINSEL_ConfigPin(&PinCfg);
+  PinCfg.Portnum = X_MAX_PORT;
+  PinCfg.Pinnum = X_MAX_PIN;
+  PINSEL_ConfigPin(&PinCfg);
+
+  PinCfg.Portnum = Y_MIN_PORT;
+  PinCfg.Pinnum = Y_MIN_PIN;
+  PINSEL_ConfigPin(&PinCfg);
+  PinCfg.Portnum = Y_MAX_PORT;
+  PinCfg.Pinnum = Y_MAX_PIN;
+  PINSEL_ConfigPin(&PinCfg);
+
+  PinCfg.Portnum = Z_MIN_PORT;
+  PinCfg.Pinnum = Z_MIN_PIN;
+  PINSEL_ConfigPin(&PinCfg);
+  PinCfg.Portnum = Z_MAX_PORT;
+  PinCfg.Pinnum = Z_MAX_PIN;
+  PINSEL_ConfigPin(&PinCfg);
+
   /* setup I/O pins */
-  pin_mode(STEPPERS_RESET_PORT, STEPPERS_RESET_PIN, OUTPUT);
-  digital_write(STEPPERS_RESET_PORT, STEPPERS_RESET_PIN, 1); /* Disable reset for all stepper motors */
+//  pin_mode(STEPPERS_RESET_PORT, STEPPERS_RESET_PIN, OUTPUT);
+//  digital_write(STEPPERS_RESET_PORT, STEPPERS_RESET_BIT, 1); /* Disable reset for all stepper motors */
 
-  pin_mode(X_STEP_PORT, X_STEP_PIN, OUTPUT);
-  pin_mode(X_DIR_PORT, X_DIR_PIN, OUTPUT);
-  pin_mode(X_ENABLE_PORT, X_ENABLE_PIN, OUTPUT);
+  pin_mode(X_STEP_PORT, X_STEP_BIT, OUTPUT);
+  pin_mode(X_DIR_PORT, X_DIR_BIT, OUTPUT);
+  pin_mode(X_ENABLE_PORT, X_ENABLE_BIT, OUTPUT);
   x_enable();
-  pin_mode(X_MIN_PORT, X_MIN_PIN, INPUT);
-  pin_mode(X_MAX_PORT, X_MAX_PIN, INPUT);
+  pin_mode(X_MIN_PORT, X_MIN_BIT, INPUT);
+  pin_mode(X_MAX_PORT, X_MAX_BIT, INPUT);
 
-  pin_mode(Y_STEP_PORT, Y_STEP_PIN, OUTPUT);
-  pin_mode(Y_DIR_PORT, Y_DIR_PIN, OUTPUT);
-  pin_mode(Y_ENABLE_PORT, Y_ENABLE_PIN, OUTPUT);
+  pin_mode(Y_STEP_PORT, Y_STEP_BIT, OUTPUT);
+  pin_mode(Y_DIR_PORT, Y_DIR_BIT, OUTPUT);
+  pin_mode(Y_ENABLE_PORT, Y_ENABLE_BIT, OUTPUT);
   y_enable();
-  pin_mode(Y_MIN_PORT, Y_MIN_PIN, INPUT);
-  pin_mode(Y_MAX_PORT, Y_MAX_PIN, INPUT);
+  pin_mode(Y_MIN_PORT, Y_MIN_BIT, INPUT);
+  pin_mode(Y_MAX_PORT, Y_MAX_BIT, INPUT);
 
-  pin_mode(Z_STEP_PORT, Z_STEP_PIN, OUTPUT);
-  pin_mode(Z_DIR_PORT, Z_DIR_PIN, OUTPUT);
-  pin_mode(Z_ENABLE_PORT, Z_ENABLE_PIN, OUTPUT);
+  pin_mode(Z_STEP_PORT, Z_STEP_BIT, OUTPUT);
+  pin_mode(Z_DIR_PORT, Z_DIR_BIT, OUTPUT);
+  pin_mode(Z_ENABLE_PORT, Z_ENABLE_BIT, OUTPUT);
   z_enable();
-  pin_mode(Z_MIN_PORT, Z_MIN_PIN, INPUT);
-  pin_mode(Z_MAX_PORT, Z_MAX_PIN, INPUT);
+  pin_mode(Z_MIN_PORT, Z_MIN_BIT, INPUT);
+  pin_mode(Z_MAX_PORT, Z_MAX_BIT, INPUT);
 
-  pin_mode(E_STEP_PORT, E_STEP_PIN, OUTPUT);
-  pin_mode(E_DIR_PORT, E_DIR_PIN, OUTPUT);
-  pin_mode(E_ENABLE_PORT, E_ENABLE_PIN, OUTPUT);
+  pin_mode(E_STEP_PORT, E_STEP_BIT, OUTPUT);
+  pin_mode(E_DIR_PORT, E_DIR_BIT, OUTPUT);
+  pin_mode(E_ENABLE_PORT, E_ENABLE_BIT, OUTPUT);
   e_enable();
 
-  pin_mode(EXTRUDER_0_FAN_PORT, EXTRUDER_0_FAN_PIN, OUTPUT);
+  pin_mode(EXTRUDER_0_FAN_PORT, EXTRUDER_0_FAN_BIT, OUTPUT);
+  pin_mode(HEATED_BED_0_HEATER_PORT, HEATED_BED_0_HEATER_BIT, OUTPUT);
 
   adc_init();
 }
