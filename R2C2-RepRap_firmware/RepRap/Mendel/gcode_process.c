@@ -907,6 +907,7 @@ eParseResult process_gcode_command()
       break;
 
       // M190- power on
+      case 17:
       case 190:
       power_on();
       x_enable();
@@ -917,6 +918,7 @@ eParseResult process_gcode_command()
       break;
 
       // M191- power off
+      case 18:
       case 191:
       x_disable();
       y_disable();
