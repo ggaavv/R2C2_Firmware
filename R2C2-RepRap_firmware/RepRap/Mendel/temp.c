@@ -34,12 +34,21 @@
 #include "sersendf.h"
 #include "stepper.h"
 
+
+
+#include "uart.h"
+
+
+
+
 /* Table for NTC EPCOS B57560G104F and R1 = 330R for Extruder0
  * Table for NTC EPCOS B57560G104F and R1 = 12K for HeatedBed0 */
  // 274
  // 10k
+
 uint16_t temptable[NUMTEMPS][3] = {
-  {1009,   36, 300}, /* {ADC value Extruder0, ADC value HeatedBed0, temperature} */
+  /* {ADC value Extruder0, ADC value HeatedBed0, temperature} */
+/*  {1009,   36, 300},
   {1119,   42, 290},
   {1240,   48, 280},
   {1372,   56, 270},
@@ -71,6 +80,69 @@ uint16_t temptable[NUMTEMPS][3] = {
   {4089, 3866,  10},
   {4092, 3954,   0}
 };
+*/
+		{	4039	,	4039	,	0	}	,
+		{	4023	,	4023	,	5	}	,
+		{	4003	,	4003	,	10	}	,
+		{	3978	,	3978	,	15	}	,
+		{	3948	,	3948	,	20	}	,
+		{	3912	,	3912	,	25	}	,
+		{	3869	,	3869	,	30	}	,
+		{	3819	,	3819	,	35	}	,
+		{	3760	,	3760	,	40	}	,
+		{	3692	,	3692	,	45	}	,
+		{	3614	,	3614	,	50	}	,
+		{	3527	,	3527	,	55	}	,
+		{	3429	,	3429	,	60	}	,
+		{	3321	,	3321	,	65	}	,
+		{	3204	,	3204	,	70	}	,
+		{	3077	,	3077	,	75	}	,
+		{	2943	,	2943	,	80	}	,
+		{	2802	,	2802	,	85	}	,
+		{	2657	,	2657	,	90	}	,
+		{	2507	,	2507	,	95	}	,
+		{	2357	,	2357	,	100	}	,
+		{	2206	,	2206	,	105	}	,
+		{	2058	,	2058	,	110	}	,
+		{	1912	,	1912	,	115	}	,
+		{	1771	,	1771	,	120	}	,
+		{	1636	,	1636	,	125	}	,
+		{	1507	,	1507	,	130	}	,
+		{	1386	,	1386	,	135	}	,
+		{	1272	,	1272	,	140	}	,
+		{	1165	,	1165	,	145	}	,
+		{	1067	,	1067	,	150	}	,
+		{	975	,	975	,	155	}	,
+		{	891	,	891	,	160	}	,
+		{	814	,	814	,	165	}	,
+		{	744	,	744	,	170	}	,
+		{	679	,	679	,	175	}	,
+		{	621	,	621	,	180	}	,
+		{	567	,	567	,	185	}	,
+		{	519	,	519	,	190	}	,
+		{	474	,	474	,	195	}	,
+		{	434	,	434	,	200	}	,
+		{	398	,	398	,	205	}	,
+		{	365	,	365	,	210	}	,
+		{	335	,	335	,	215	}	,
+		{	308	,	308	,	220	}	,
+		{	283	,	283	,	225	}	,
+		{	261	,	261	,	230	}	,
+		{	240	,	240	,	235	}	,
+		{	222	,	222	,	240	}	,
+		{	205	,	205	,	245	}	,
+		{	189	,	189	,	250	}	,
+		{	175	,	175	,	255	}	,
+		{	162	,	162	,	260	}	,
+		{	151	,	151	,	265	}	,
+		{	140	,	140	,	270	}	,
+		{	130	,	130	,	275	}	,
+		{	121	,	121	,	280	}	,
+		{	113	,	113	,	285	}	,
+		{	105	,	105	,	290	}	,
+		{	98	,	98	,	295	}	,
+		{	92	,	92	,	300	}	,
+};
 
 static uint16_t current_temp [NUMBER_OF_SENSORS] = {0};
 static uint16_t target_temp  [NUMBER_OF_SENSORS] = {0};
@@ -83,7 +155,7 @@ static uint16_t ticks;
  */
 #define ADC_READ_TIMES 4
 
-#define NUM_TICKS 20
+#define NUM_TICKS 1
 
 #ifndef	ABSDELTA
 #define	ABSDELTA(a, b)	(((a) >= (b))?((a) - (b)):((b) - (a)))
@@ -187,13 +259,13 @@ static uint16_t read_temp(uint8_t sensor_number)
   adc_filtered[sensor_number] = ((adc_filtered[sensor_number] * 7) + raw) / 8;
   
   raw = adc_filtered[sensor_number];
-  
+
   /* Go and use the temperature table to math the temperature value... */
-  if (raw < temptable[0][sensor_number]) /* Limit the smaller value... */
+  if (raw > temptable[0][sensor_number]) /* Limit the smaller value... */
   {
     celsius = temptable[0][2];
   }
-  else if (raw >= temptable[NUMTEMPS-1][sensor_number]) /* Limit the higher value... */
+  else if (raw < temptable[NUMTEMPS-1][sensor_number]) /* Limit the higher value... */
   {
     celsius = temptable[NUMTEMPS-1][2];
   }
@@ -201,18 +273,18 @@ static uint16_t read_temp(uint8_t sensor_number)
   {
     for (i=1; i<NUMTEMPS; i++)
     {
-      if (raw < temptable[i][sensor_number])
+      if (raw > temptable[i][sensor_number])
       {
         celsius = temptable[i-1][2] +
             (raw - temptable[i-1][sensor_number]) *
             (temptable[i][2] - temptable[i-1][2]) /
             (temptable[i][sensor_number] - temptable[i-1][sensor_number]);
-
         break;
       }
     }
   }
-
+  uart_writestr("\nTemp: ");
+  uart_send_32_Hex(celsius);
   return celsius;
 }
 

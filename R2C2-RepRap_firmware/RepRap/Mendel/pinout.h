@@ -148,8 +148,8 @@
 #define BUZZER_BIT      (1 << BUZZER_PIN)
 #define BUZZER_CHANNEL  6         /* P2.2 PWM1[3] */
 
-#define DEBUG_PORT      1
-#define DEBUG_PIN       18
+#define DEBUG_PORT      0
+#define DEBUG_PIN       27
 #define DEBUG_BIT       (1 << DEBUG_PIN)
 
 #define SD_SSEL_PORT    2
@@ -173,8 +173,8 @@
 #define x_step() digital_write(X_STEP_PORT, X_STEP_BIT, 1)
 #define x_unstep() digital_write(X_STEP_PORT, X_STEP_BIT, 0)
 #define x_direction(dir) digital_write(X_DIR_PORT, X_DIR_BIT, dir)
-#define x_min() ((digital_read(X_MIN_PORT, X_MIN_BIT))?1:0)
-#define x_max() ((digital_read(X_MAX_PORT, X_MAX_BIT))?1:0)
+#define x_min() ((digital_read(X_MIN_PORT, X_MIN_BIT))?0:1)
+#define x_max() ((digital_read(X_MAX_PORT, X_MAX_BIT))?0:1)
 
 /*
         Y Stepper
@@ -184,8 +184,8 @@
 #define y_step() digital_write(Y_STEP_PORT, Y_STEP_BIT, 1)
 #define y_unstep() digital_write(Y_STEP_PORT, Y_STEP_BIT, 0)
 #define y_direction(dir) digital_write(Y_DIR_PORT, Y_DIR_BIT, dir)
-#define y_min() ((digital_read(Y_MIN_PORT, Y_MIN_BIT))?1:0)
-#define y_max() ((digital_read(Y_MAX_PORT, Y_MAX_BIT))?1:0)
+#define y_min() ((digital_read(Y_MIN_PORT, Y_MIN_BIT))?0:1)
+#define y_max() ((digital_read(Y_MAX_PORT, Y_MAX_BIT))?0:1)
 
 /*
         Z Stepper
@@ -195,8 +195,8 @@
 #define z_step() digital_write(Z_STEP_PORT, Z_STEP_BIT, 1)
 #define z_unstep() digital_write(Z_STEP_PORT, Z_STEP_BIT, 0)
 #define z_direction(dir) digital_write(Z_DIR_PORT, Z_DIR_BIT, dir)
-#define z_min() ((digital_read(Z_MIN_PORT, Z_MIN_BIT))?1:0)
-#define z_max() ((digital_read(Z_MAX_PORT, Z_MAX_BIT))?1:0)
+#define z_min() ((digital_read(Z_MIN_PORT, Z_MIN_BIT))?0:1)
+#define z_max() ((digital_read(Z_MAX_PORT, Z_MAX_BIT))?0:1)
 
 /*
         Extruder

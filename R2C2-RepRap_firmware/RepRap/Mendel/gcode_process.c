@@ -217,10 +217,10 @@ static void zero_x(void)
   synch_queue();
   
   // move forward a bit
-  SpecialMoveXY(startpoint.x + 3, startpoint.y, config.search_feedrate_x);
+  SpecialMoveXY(startpoint.x + 10, startpoint.y, config.search_feedrate_x);
 
   // move back in to endstops slowly
-  SpecialMoveXY(startpoint.x - 6, startpoint.y, config.search_feedrate_x);
+  SpecialMoveXY(startpoint.x - 15, startpoint.y, config.search_feedrate_x);
   
   synch_queue();
 
@@ -241,14 +241,14 @@ static void zero_y(void)
   else
     dir = 1;
     
-  SpecialMoveXY(startpoint.x, startpoint.y + dir * 250, config.homing_feedrate_y);
+  SpecialMoveXY(startpoint.x, startpoint.y + dir * 300, config.homing_feedrate_y);
   
   synch_queue();
   
   // move forward a bit
-  SpecialMoveXY(startpoint.x, startpoint.y - dir * 3, config.search_feedrate_y);
+  SpecialMoveXY(startpoint.x, startpoint.y - dir * 10, config.search_feedrate_y);
   // move back in to endstops slowly
-  SpecialMoveXY(startpoint.x, startpoint.y + dir * 6, config.search_feedrate_y);
+  SpecialMoveXY(startpoint.x, startpoint.y + dir * 15, config.search_feedrate_y);
 
   synch_queue();
 
@@ -266,11 +266,11 @@ static void zero_z(void)
   synch_queue();
   
   // move forward a bit
-  SpecialMoveZ(startpoint.z + 1, config.search_feedrate_z);
+  SpecialMoveZ(startpoint.z + 10, config.search_feedrate_z);
   synch_queue();
 
   // move back in to endstops slowly
-  SpecialMoveZ(startpoint.z - 6, config.search_feedrate_z);
+  SpecialMoveZ(startpoint.z - 15, config.search_feedrate_z);
   synch_queue();
 
   // this is our home point
@@ -514,7 +514,7 @@ eParseResult process_gcode_command()
       // no break here, G30 is move and then go home
 
       //	G28 - go home
-      case 28:
+/*      case 28:
       
       if (next_target.seen_X)
       {
@@ -564,7 +564,7 @@ eParseResult process_gcode_command()
         (double)startpoint.Y / config.steps_per_mm_y, 
         (double)startpoint.Z / config.steps_per_mm_z);
 #endif
-      break;
+      break;*/
 
       // G90 - absolute positioning
       case 90:
@@ -577,7 +577,7 @@ eParseResult process_gcode_command()
       break;
 
       //	G92 - set home
-      case 92:
+/*      case 161:
       {
         tTarget new_pos;
         
@@ -620,6 +620,106 @@ eParseResult process_gcode_command()
       
       plan_set_current_position (&new_pos);
       }
+      break;*/
+
+      //	G161 - set position
+      case 92:
+      {
+        tTarget new_pos;
+
+      // must have no moves pending if changing position
+      synch_queue();
+
+      new_pos = startpoint;
+
+      if (next_target.seen_X)
+      {
+        new_pos.x = next_target.target.x;
+        axisSelected = 1;
+      }
+
+      if (next_target.seen_Y)
+      {
+        new_pos.y = next_target.target.y;
+        axisSelected = 1;
+      }
+
+      if (next_target.seen_Z)
+      {
+        new_pos.z = next_target.target.z;
+        axisSelected = 1;
+      }
+
+      if (next_target.seen_E)
+      {
+        new_pos.e = next_target.target.e;
+        axisSelected = 1;
+      }
+
+      if(!axisSelected)
+      {
+          new_pos.x = 0;
+          new_pos.y = 0;
+          new_pos.z = 0;
+          new_pos.e = 0;
+      }
+
+      plan_set_current_position (&new_pos);
+      }
+      break;
+
+      //	G161 - Home negative
+      case 28:
+      case 161:
+
+      if (next_target.seen_X)
+      {
+          zero_x();
+          axisSelected = 1;
+      }
+
+      if (next_target.seen_Y)
+      {
+          zero_y();
+          axisSelected = 1;
+      }
+
+      if (next_target.seen_Z)
+      {
+          zero_z();
+          axisSelected = 1;
+       }
+
+       if (next_target.seen_E)
+       {
+          zero_e();
+          axisSelected = 1;
+       }
+
+       if(!axisSelected)
+       {
+          // move down to clear Z endstop
+          // Rapman only?
+//        SpecialMoveZ (startpoint.Z + 3 * config.steps_per_mm_z, config.homing_feedrate_x);
+          next_targetd = startpoint;
+          next_targetd.z += 3;
+          next_targetd.feed_rate = config.homing_feedrate_z;
+          enqueue_moved(&next_targetd);
+
+          zero_x();
+          zero_y();
+          zero_z();
+          zero_e();
+       }
+
+      //!      startpoint.F = config.homing_feedrate_x;  //?
+
+#ifdef USE_GRBLX
+       plan_set_current_position (
+       (double)startpoint.X / config.steps_per_mm_x,
+       (double)startpoint.Y / config.steps_per_mm_y,
+       (double)startpoint.Z / config.steps_per_mm_z);
+#endif
       break;
 
       // unknown gcode: spit an error
@@ -633,6 +733,10 @@ eParseResult process_gcode_command()
   {
     switch (next_target.M)
     {
+
+      case 6: // M6 - Wait for tool to heat up
+      enqueue_wait_temp();
+      break;
 
       // SD File functions
       case 20: // M20 - list SD Card files
@@ -761,12 +865,12 @@ eParseResult process_gcode_command()
       // M104- set temperature
       case 104:
       if (config.enable_extruder_1)
-      {
+//      {
         temp_set(next_target.S, EXTRUDER_0);
       
-        if (config.wait_on_temp)
-          enqueue_wait_temp();
-      }
+//        if (config.wait_on_temp)
+//          enqueue_wait_temp();
+//      }
 
       break;
 
@@ -846,6 +950,17 @@ eParseResult process_gcode_command()
       // M115- report firmware version
       case 115:
         sersendf("FIRMWARE_NAME:Teacup_R2C2 FIRMWARE_URL:http%%3A//github.com/bitboxelectronics/R2C2 PROTOCOL_VERSION:1.0 MACHINE_TYPE:Mendel\r\n");
+      break;
+
+      //	M116 - Sync
+      case 116:
+      // wait for all moves to complete
+      synch_queue();
+
+      // delay
+      if (next_target.seen_P) {
+      delay_ms(next_target.P);
+      };
       break;
 
       case 119:

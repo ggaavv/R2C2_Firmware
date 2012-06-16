@@ -1,0 +1,93 @@
+# Config file for RepRap machines
+# Tested on a RepRap Mendel with a Wade Extruder
+
+# Number of step for each milimeter at Full steps
+# steps_per_mm_x = 4.01
+# steps_per_mm_y = 2.87
+# steps_per_mm_z = 160
+# steps_per_mm_e = 20.66
+
+# Number of step for each milimeter at 2 microsteps
+# steps_per_mm_x = 8.02
+# steps_per_mm_y = 5.74
+# steps_per_mm_z = 320
+# steps_per_mm_e = 41.31
+
+# Number of step for each milimeter at 4 microsteps
+# steps_per_mm_x = 16.04
+# steps_per_mm_y = 11.48
+# steps_per_mm_z = 640
+# steps_per_mm_e = 82.62
+
+# Number of step for each milimeter at 8 microsteps
+# steps_per_mm_x = 32.07
+# steps_per_mm_y = 22.97
+# steps_per_mm_z = 1280
+# steps_per_mm_e = 165.25
+
+# Number of step for each milimeter at 10 microsteps
+# steps_per_mm_x = 40.09
+# steps_per_mm_y = 28.71
+# steps_per_mm_z = 1600
+# steps_per_mm_e = 206.56
+
+# Number of step for each milimeter at 16 microsteps
+steps_per_mm_x = 64.15
+steps_per_mm_y = 45.93
+steps_per_mm_z = 2560
+steps_per_mm_e = 330.49
+
+# Max feed rate of the machine
+maximum_feedrate_x = 30000
+maximum_feedrate_y = 30000
+maximum_feedrate_z = 200
+maximum_feedrate_e = 6000
+
+# very slow speed for fine search
+search_feedrate_x = 400
+search_feedrate_y = 400
+search_feedrate_z = 50
+search_feedrate_e = 1600
+
+# slow speed for initial search
+homing_feedrate_x = 3000
+homing_feedrate_y = 3000
+homing_feedrate_z = 150
+
+# acceleration
+acceleration = 750
+
+# direction of travel to find "home" endstop
+# +1 = move in positive, -1 = move negative
+home_direction_x = -1
+home_direction_y = -1
+home_direction_z = -1
+
+# the coordinates to set when home found
+home_pos_x = -92.5
+home_pos_y = -87.5
+home_pos_z = 0
+
+# set to 1 if there is a dump position, for priming extruder
+have_dump_pos = 0
+rest_pos_x = 0
+rest_pos_y = 0
+
+# set to 1 if there is a rest position, e.g. at end print, temperature wait
+have_rest_pos = 1
+rest_pos_x = 85
+rest_pos_y = -87.5
+rest_pos_z = 75
+
+# set to 1 if there is a wipe position
+have_wipe_pos = 0
+wipe_pos_x = 0
+wipe_pos_y = 0
+
+# size of print area 
+printing_vol_x = 170
+printing_vol_y = 175
+printing_vol_z = 100
+
+# options
+wait_on_temp = 0
